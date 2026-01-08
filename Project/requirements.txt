@@ -27,4 +27,8 @@ pyvis==0.3.2
 tqdm==4.67.1
 requests
 rank-bm25
+pymupdf
+groq
+python-dotenv
+
 

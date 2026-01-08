@@ -17,15 +17,15 @@ def search_arxiv(query: str, max_results=20):
 
             papers = []
             for r in search.results():
-                papers.append(
-                    Paper(
-                        title=r.title,
-                        authors=[a.name for a in r.authors],
-                        abstract=r.summary,
-                        year=r.published.year,
-                        source_id=r.entry_id.split("/")[-1]
-                    )
+                paper = Paper(
+                    title=r.title,
+                    authors=[a.name for a in r.authors],
+                    abstract=r.summary,
+                    year=r.published.year,
+                    source_id=r.entry_id.split("/")[-1]
                 )
+                paper.pdf_url = r.pdf_url
+
 
             return papers
 
