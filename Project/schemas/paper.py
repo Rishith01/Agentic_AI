@@ -8,5 +8,10 @@ class Paper:
     authors: List[str]
     abstract: str
     year: int
-    source_id: str   # arXiv id
+    source_id: str
     relevance_score: float = 0.0
+
+    # Phase 2 fields
+    citation_count: int = 0
+    citation_score: float = 0.0
+    final_score: float = 0.0

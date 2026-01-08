@@ -25,3 +25,6 @@ pyvis==0.3.2
 
 # Utilities
 tqdm==4.67.1
+requests
+rank-bm25
+

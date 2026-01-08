@@ -1,16 +1,36 @@
 # ranking/relevance.py
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+
+from rank_bm25 import BM25Okapi
+import re
+
+
+def tokenize(text: str):
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9\s]", "", text)
+    return text.split()
+
 
 def score(query: str, papers):
-    corpus = [p.abstract for p in papers] + [query]
+    """
+    Computes BM25 relevance scores.
+    Mutates papers by setting relevance_score.
+    """
 
-    tfidf = TfidfVectorizer(stop_words="english")
-    X = tfidf.fit_transform(corpus)
+    # Build corpus: title + abstract (title weighted higher)
+    corpus = []
+    for p in papers:
+        text = (p.title + " ") * 3 + p.abstract
+        corpus.append(tokenize(text))
 
-    sims = cosine_similarity(X[-1], X[:-1]).flatten()
+    bm25 = BM25Okapi(corpus)
 
-    for p, s in zip(papers, sims):
-        p.relevance_score = float(s)
+    query_tokens = tokenize(query)
+    scores = bm25.get_scores(query_tokens)
 
-    return sorted(papers, key=lambda x: x.relevance_score, reverse=True)
+    # Normalize scores to [0,1] for stability
+    max_score = max(scores) if scores.any() else 1.0
+
+    for p, s in zip(papers, scores):
+        p.relevance_score = float(s / max_score)
+
+    return papers
